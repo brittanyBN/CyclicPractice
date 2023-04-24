@@ -1,42 +1,41 @@
-const { Router } = require("express");
-const { save } = require("../save_json");
-let favouriteNumber = require("../text.json");
+const express = require("express");
+const router = new express.Router();
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3()
 
-const router = new Router();
-
-router.get("/", async (req, res) => {
-  res.json({
-    status: "success",
-    result: "Hello World",
-  });
-});
-
-router.get("/text", async (req, res) => {
+/* GET home page. */
+router.get('/', async function(req, res, next) {
   let my_file = await s3.getObject({
-    Bucket: "cyclic-scary-sneakers-clam-us-east-1",
-    Key: "text.json",
+    Bucket: process.env.CYCLIC_BUCKET_NAME,
+    Key: "content.json",
   }).promise()
-  const randomText = JSON.parse(my_file.Body)?.content;
-  res.json({
-    status: "success",
-    result: randomText,
-  });
+  const result = JSON.parse(my_file.Body)?.content
+  if(result == null) {
+    res.json({
+      status: "fail"
+    });
+  }
+  else {
+    res.json({
+      status: "success",
+      content: result,
+    });
+  }
 });
 
-router.post("/text", async (req, res) => {
+router.post("/", async (req, res) => {
   const {content} = req.body;
-  if(content == null ) {
-    res.status(400).send("Text not provided");
-    return;
-  }
-  await save({
+  const contentObj = {
     content: content
-  });
+  }
+  await s3.putObject({
+    Body: JSON.stringify(contentObj, null, 2),
+    Bucket: process.env.CYCLIC_BUCKET_NAME,
+    Key: "content.json",
+  }).promise()
   res.json({
     status: "success",
-    newContent: content,
+    content: content,
   });
 });
 
