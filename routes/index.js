@@ -3,8 +3,7 @@ const router = new express.Router();
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3()
 
-/* GET home page. */
-router.get('/', async function(req, res, next) {
+router.get('/text', async function(req, res, next) {
   let my_file = await s3.getObject({
     Bucket: process.env.CYCLIC_BUCKET_NAME,
     Key: "content.json",
@@ -23,7 +22,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/text", async (req, res) => {
   const {content} = req.body;
   const contentObj = {
     content: content
