@@ -6,9 +6,16 @@ const s3 = new AWS.S3()
 
 const router = new Router();
 
+router.get("/", async (req, res) => {
+  res.json({
+    status: "success",
+    result: "Hello World",
+  });
+});
+
 router.get("/text", async (req, res) => {
   let my_file = await s3.getObject({
-    Bucket: "cyclic-dull-puce-dhole-toga-us-east-1\n",
+    Bucket: "cyclic-scary-sneakers-clam-us-east-1",
     Key: "text.json",
   }).promise()
   const randomText = JSON.parse(my_file.Body)?.content;

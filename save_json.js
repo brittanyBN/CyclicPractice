@@ -7,7 +7,7 @@ const save = async (randomText) => {
     console.log("saving");
     await s3.putObject({
         Body: JSON.stringify(randomText, null, 2),
-        Bucket: "cyclic-dull-puce-dhole-toga-us-east-1",
+        Bucket: "cyclic-scary-sneakers-clam-us-east-1",
         Key: "text.json",
     }).promise()
 };
